@@ -12,13 +12,13 @@ export class CartRepository implements ICartRepository {
 
     constructor(
         @InjectRepository(Cart)
-        private readonly cartRepository: Repository<Cart>
+        private readonly cartRepository: Repository<Cart>,
 
         @InjectRepository(CartProducts)
         private readonly cartProductsRepository: Repository<CartProducts>
     ) { }
 
-    async createOneCart(createOneCartDTO): Promise<Cart> {
+    async createOneCart(createOneCartDTO: CreateOneCartDTO): Promise<Cart> {
         const cart = this.cartRepository.create(createOneCartDTO)
 
         await this.cartRepository.save(cart)
