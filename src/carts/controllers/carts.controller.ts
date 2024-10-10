@@ -4,7 +4,7 @@ import { CartUseCases } from '../useCases/cart.usecase';
 import { CreateOneCartDTO } from '../dto/createOneCart.dto';
 
 @Controller('carts')
-@ApiTags('carts')
+@ApiTags('Carts')
 export class CartsController {
   constructor(private readonly cartsUseCases: CartUseCases) {}
 
