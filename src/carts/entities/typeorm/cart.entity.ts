@@ -3,6 +3,11 @@ import { ICart } from '../cart.model';
 import { Company } from 'src/companies/entities/typeorm/company.entity';
 import { CartProducts } from './cartProducts.entity';
 
+export enum CartStatus {
+    OPEN = 'open',
+    CLOSED = 'closed',
+    CANCELED = 'canceled'
+}
 @Entity('cart')
 export class Cart implements ICart{
 
@@ -10,7 +15,7 @@ export class Cart implements ICart{
     id: string
 
     @Column()
-    bueyerTaxId: string // TODO: point to a FK
+    buyerTaxId: string
 
     @ManyToOne(() => Company, (company) => company.taxId)
     @JoinColumn({
@@ -20,11 +25,18 @@ export class Cart implements ICart{
     })
     buyer: Company
 
-    @OneToMany(() => CartProducts, (cartProducts) => cartProducts.cart)
+    @OneToMany(
+        () => CartProducts, 
+        (cartProducts) => cartProducts.cart, 
+        { cascade: true }
+    )
     productCarts: CartProducts[]
 
-    @Column()
-    status: string // TODO: enum
+    @Column({
+        enum: CartStatus,
+        default: CartStatus.OPEN
+    })
+    status: CartStatus
 
     @Column()
     subtotalAmountCents: number // Not sure if it should be here
