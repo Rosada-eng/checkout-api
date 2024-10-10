@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn} from 'typeorm'
+import { Entity, Column, PrimaryColumn, CreateDateColumn, OneToOne} from 'typeorm'
+import { ICompany } from '../company.model'
 
 @Entity('company')
-export class Company {
+export class Company implements ICompany{
 
     @PrimaryColumn({ comment: 'Companies CNPJ' })
     taxId: string
@@ -14,5 +15,4 @@ export class Company {
 
     @CreateDateColumn()
     createdAt: Date
-
 }
