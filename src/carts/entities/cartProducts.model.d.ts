@@ -5,7 +5,5 @@ export interface ICartProducts {
 
     product: IProduct
 
-    amount: number
-    
-    unitPriceCents: number // can apply discounts
+    quantity: number
 }

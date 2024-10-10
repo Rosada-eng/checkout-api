@@ -26,10 +26,7 @@ export class CartProducts implements ICartProducts {
     product: Product
 
     @Column({ default: 1 })
-    amount: number
-
-    @Column()
-    unitPriceCents: number
+    quantity: number
 
     @CreateDateColumn()
     createdAt: Date
