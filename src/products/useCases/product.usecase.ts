@@ -12,14 +12,14 @@ export class ProductUseCases implements IProductUseCases{
   ) { }
 
   async createOneProduct(createOneProductDTO: ICreateOneProductDTO): Promise<string> {
-    return await this.productRepository.createOne(createOneProductDTO);
+    return await this.productRepository.createOneProduct(createOneProductDTO);
 
   }
   async getOneProduct(productId: string): Promise<IProduct | null> {
-    return await this.productRepository.findOneById(productId);
+    return await this.productRepository.findOneProductById(productId);
   }
   async getAllProducts(): Promise<IProduct[]> {
-    return await this.productRepository.findAll();
+    return await this.productRepository.findAllProducts();
   }
 
 }
