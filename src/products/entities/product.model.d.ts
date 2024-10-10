@@ -3,7 +3,7 @@ export interface IProduct {
     
     name: string
     
-    defaultUnitPriceCents: number
+    unitPriceCents: number
     
     imageUrl:? string | null
     
