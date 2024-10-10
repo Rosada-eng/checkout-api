@@ -1,13 +1,15 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ProductUseCases } from '../useCases/product.usecase';
-import { ICreateOneProductDTO } from '../dto/createOneProduct.dto.d';
+import { CreateOneProductDTO } from '../dto/createOneProduct.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('products')
+@ApiTags('Products')
 export class ProductsController {
   constructor(private readonly productsService: ProductUseCases) {}
 
   @Post()
-  async createOneProduct(@Body() createOneProductDTO: ICreateOneProductDTO) {
+  async createOneProduct(@Body() createOneProductDTO: CreateOneProductDTO) {
     return await this.productsService.createOneProduct(createOneProductDTO);
   }
 
