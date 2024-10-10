@@ -1,9 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ICreateOneCartDTO } from './createOneCart.dto.d';
-import { IsString } from 'class-validator';
+import { IsString, Length } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateOneCartDTO implements ICreateOneCartDTO {
     @IsString()
-    @ApiProperty()
+    @Transform(({ value }) => {
+        const onlyNumbersRegex = /\D/g;
+        const clearTaxId = value.replace(onlyNumbersRegex, '');
+    
+        if (clearTaxId.length > 0) {
+          return clearTaxId;
+        }
+    
+        return null;
+      }
+    )
+    @Length(14)
+    @ApiProperty({
+        example: '26.900.161/0001-25',
+        description: 'Company CNPJ number. There is no need to send special characters, only numbers',
+        }
+    )
     buyerTaxId: string
 }
