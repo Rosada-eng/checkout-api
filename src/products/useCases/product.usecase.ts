@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { IProductUseCases } from './product.usecase.d';
 import { IProduct } from '../entities/product.model.d';
 import { ICreateOneProductDTO } from '../dto/createOneProduct.dto.d';
-import { IProductRepository } from '../repositories/product.repository.d';
+import { ProductRepository } from '../repositories/product.repository';
 
 @Injectable()
 export class ProductUseCases implements IProductUseCases{
 
   constructor(
-    private readonly productRepository: IProductRepository,
+    private readonly productRepository: ProductRepository,
   ) { }
 
   async createOneProduct(createOneProductDTO: ICreateOneProductDTO): Promise<string> {
