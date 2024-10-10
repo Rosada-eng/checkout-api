@@ -2,9 +2,9 @@ import { ICreateOneProductDTO } from '../dto/createOneProduct.dto';
 import { IProduct } from '../entities/product.model';
 
 export interface IProductRepository {
-    createOne: (createOneProductDTO: ICreateOneProductDTO) => Promise<string>
+    createOneProduct: (createOneProductDTO: ICreateOneProductDTO) => Promise<string>
 
-    findOneById: (id: string) => Promise<IProduct | null>
+    findOneProductById: (id: string) => Promise<IProduct | null>
 
-    findAll: () => Promise<IProduct[]>
+    findAllProducts: () => Promise<IProduct[]>
 }

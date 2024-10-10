@@ -14,7 +14,7 @@ export class ProductRepository implements IProductRepository {
         private readonly productRepository: Repository<Product>
     ) { }
 
-    async createOne(createOneProductDTO: ICreateOneProductDTO): Promise<string> {
+    async createOneProduct(createOneProductDTO: ICreateOneProductDTO): Promise<string> {
         const insertResult = await this.productRepository.insert(
             createOneProductDTO,
         ); 
@@ -24,13 +24,13 @@ export class ProductRepository implements IProductRepository {
         return productId;
         
     }
-    async findOneById(id: string): Promise<IProduct | null> {
+    async findOneProductById(id: string): Promise<IProduct | null> {
         return await this.productRepository.findOneBy({
             id
         })
     }
 
-    findAll(): Promise<IProduct[]> {
+    findAllProducts(): Promise<IProduct[]> {
         return this.productRepository.find()
     }
 }
