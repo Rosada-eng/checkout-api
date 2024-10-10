@@ -6,20 +6,20 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('products')
 @ApiTags('Products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductUseCases) {}
+  constructor(private readonly productsUseCases: ProductUseCases) {}
 
   @Post()
   async createOneProduct(@Body() createOneProductDTO: CreateOneProductDTO) {
-    return await this.productsService.createOneProduct(createOneProductDTO);
+    return await this.productsUseCases.createOneProduct(createOneProductDTO);
   }
 
   @Get(':id')
   async getOneProduct(@Param('id') productId: string) {
-    return await this.productsService.getOneProduct(productId);
+    return await this.productsUseCases.getOneProduct(productId);
   }
 
   @Get()
   async getAllProducts() {
-    return await this.productsService.getAllProducts();
+    return await this.productsUseCases.getAllProducts();
   }
 }

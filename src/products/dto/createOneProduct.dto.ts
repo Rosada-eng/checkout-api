@@ -19,7 +19,7 @@ export class CreateOneProductDTO implements ICreateOneProductDTO {
         example: 10000,
         description: 'The default value (before any discount) of the product in Reais, measured in cents'
     })
-    defaultUnitPriceCents: number;
+    unitPriceCents: number;
 
     @IsOptional()
     @IsString()

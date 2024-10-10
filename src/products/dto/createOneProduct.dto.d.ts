@@ -1,5 +1,5 @@
 export interface ICreateOneProductDTO {
     name: string
-    defaultUnitPriceCents: number
+    unitPriceCents: number
     imageUrl?: string
 }

@@ -11,7 +11,7 @@ export class Product implements IProduct {
     name: string
 
     @Column()
-    defaultUnitPriceCents: number
+    unitPriceCents: number
 
     @Column({ nullable: true })
     imageUrl: string | null

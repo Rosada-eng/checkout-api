@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IProductUseCases } from './product.usecase.d';
 import { IProduct } from '../entities/product.model.d';
 import { ICreateOneProductDTO } from '../dto/createOneProduct.dto.d';
-import { ProductRepository } from '../repositories/product.repository';
+import { ProductRepository } from '../repositories/typeorm/product.repository';
 
 @Injectable()
 export class ProductUseCases implements IProductUseCases{
