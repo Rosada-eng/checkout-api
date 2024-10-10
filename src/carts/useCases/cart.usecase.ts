@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ICartUseCases } from './cart.usecase.d';
 import { CartRepository } from '../repositories/typeorm/cart.repository';
 import { CreateOneCartDTO } from '../dto/createOneCart.dto';
-import { ProductRepository } from 'src/products/repositories/product.repository';
+import { ProductRepository } from 'src/products/repositories/typeorm/product.repository';
 import { Cart, CartStatus } from '../entities/typeorm/cart.entity';
+import { CompanyRepository } from 'src/companies/repositories/typeorm/company.repository';
 
 @Injectable()
 export class CartUseCases implements ICartUseCases {
@@ -11,11 +12,19 @@ export class CartUseCases implements ICartUseCases {
   constructor(
     private readonly cartRepository: CartRepository,
 
-    private readonly productRepository: ProductRepository
+    private readonly productRepository: ProductRepository,
+
+    private readonly companyRepository: CompanyRepository
   ) { }
 
-  async createOneCart(createOneCartDTO: CreateOneCartDTO): Promise<Cart> {
-    return await this.cartRepository.createOneCart(createOneCartDTO);
+  async createOneCart({ buyerTaxId }: CreateOneCartDTO): Promise<Cart> {
+    const buyer = this.companyRepository.findOneCompanyByTaxId({ taxId: buyerTaxId });
+
+    if (!buyer) {
+      throw new Error('Company not found');
+    }
+    
+    return await this.cartRepository.createOneCart({ buyerTaxId });
   }
 
   async findOneCartById(cartId: string): Promise<Cart> {
@@ -86,11 +95,11 @@ export class CartUseCases implements ICartUseCases {
     return await this.cartRepository.updateCartStatus(cartId, CartStatus.CLOSED);
   }
 
-  async calculateSubtotalAmount(cartId: string): Promise<number> {
+  async calculateSubtotalAmountInCents(cartId: string): Promise<number> {
     return await this.cartRepository.aggregateCartProductsValueInCents(cartId);
   }
 
-  calculateTaxAmountCents(subtotalAmountCents : number): number {
+  calculateTaxAmountInCents(subtotalAmountCents : number): number {
     return subtotalAmountCents * 0.04;
   }
 
