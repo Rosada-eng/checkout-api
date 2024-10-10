@@ -28,7 +28,7 @@ export class Cart implements ICart{
     @OneToMany(
         () => CartProducts, 
         (cartProducts) => cartProducts.cart, 
-        { cascade: true }
+        { cascade: true, nullable: true }
     )
     productCarts: CartProducts[]
 
@@ -38,10 +38,10 @@ export class Cart implements ICart{
     })
     status: CartStatus
 
-    @Column()
+    @Column({ default: 0 })
     subtotalAmountCents: number // Not sure if it should be here
 
-    @Column()
+    @Column({ default: 0 })
     taxAmountCents: number // Not sure if it should be here
 
     @CreateDateColumn()
