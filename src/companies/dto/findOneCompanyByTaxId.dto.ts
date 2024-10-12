@@ -9,6 +9,7 @@ export class FindOneCompanyByTaxIdDTO implements IFindOneCompanyByTaxIdDTO {
         const onlyNumbersRegex = /\D/g;
         const clearTaxId = value.replace(onlyNumbersRegex, '');
     
+
         if (clearTaxId.length > 0) {
           return clearTaxId;
         }

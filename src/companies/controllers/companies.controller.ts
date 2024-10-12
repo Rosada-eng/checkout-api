@@ -19,8 +19,8 @@ export class CompaniesController {
     return await this.companiesService.findAllCompanies();
   }
 
-  @Get(':taxId')
-  async findOne(@Param('taxId') taxId: FindOneCompanyByTaxIdDTO) {
+  @Get(':taxId', )
+  async findOne(@Param() taxId: FindOneCompanyByTaxIdDTO) {
     return await this.companiesService.findOneCompanyByTaxId(taxId);
   }
 
