@@ -5,6 +5,8 @@ import { CreateOneCartDTO } from '../dto/createOneCart.dto';
 import { ProductRepository } from 'src/products/repositories/typeorm/product.repository';
 import { Cart, CartStatus } from '../entities/typeorm/cart.entity';
 import { CompanyRepository } from 'src/companies/repositories/typeorm/company.repository';
+import { OrderRepository } from 'src/orders/repositories/order.repository';
+import { simulateShippingCostCents } from 'src/orders/useCases/simulator/simulator';
 
 @Injectable()
 export class CartUseCases implements ICartUseCases {
@@ -14,7 +16,9 @@ export class CartUseCases implements ICartUseCases {
 
     private readonly productRepository: ProductRepository,
 
-    private readonly companyRepository: CompanyRepository
+    private readonly companyRepository: CompanyRepository,
+
+    private readonly orderRepository: OrderRepository
   ) { }
 
   async createOneCart({ buyerTaxId }: CreateOneCartDTO): Promise<Cart> {
@@ -58,7 +62,7 @@ export class CartUseCases implements ICartUseCases {
       cart.productCarts.push(newCartProduct);
     }
 
-    await this.cartRepository.persist(cart);
+    await this.cartRepository.persistCart(cart);
 
     return cart;
   }
@@ -76,31 +80,66 @@ export class CartUseCases implements ICartUseCases {
       throw new Error('Product not found in cart');
     }
 
-    if (cartProduct.quantity > 1) {
+    if (cartProduct.quantity > 0) {
       cartProduct.quantity -= 1;
-    } else {
-      cart.productCarts = cart.productCarts.filter((productCart) => productCart.productId !== productId);
-    }
+    } 
 
-    await this.cartRepository.persist(cart);
+    await this.cartRepository.persistCart(cart);
+
+    if (cartProduct.quantity === 0) {
+      await this.cartRepository.removeCartProduct(cartId, productId);
+      await this.cartRepository.persistCartProduct(cartProduct);
+    }
 
     return cart;
   }
 
   async cancelCart(cartId: string): Promise<void> {
-    return await this.cartRepository.updateCartStatus(cartId, CartStatus.CANCELED);
+    await this.cartRepository.updateCartStatus(cartId, CartStatus.CANCELED);
   }
 
-  async closeCart(cartId: string): Promise<void> {
-    return await this.cartRepository.updateCartStatus(cartId, CartStatus.CLOSED);
+  async closeCart(cartId: string): Promise<object> {
+    const cart = await this.cartRepository.updateCartStatus(cartId, CartStatus.CLOSED);
+
+    await this.cartRepository.updateCartValueCents(cartId); 
+
+    const shippingCostCents = simulateShippingCostCents().data.shippingCostCents || 0;
+
+    const order = await this.orderRepository.createOneOrder({
+      cartId: cart.id,
+      buyerTaxId: cart.buyerTaxId,
+      sellerTaxId: cart.buyerTaxId,
+      subtotalAmountCents: cart.subtotalAmountCents,
+      taxAmountCents: cart.taxAmountCents,
+      shippingCostCents,
+    });
+
+    return {
+      order,
+      cart
+    }
   }
 
-  async calculateSubtotalAmountInCents(cartId: string): Promise<number> {
-    return await this.cartRepository.aggregateCartProductsValueInCents(cartId);
+  async calculateValues(cartId: string): Promise<object> {
+    const subtotalAmountCents = await this.cartRepository.aggregateCartProductsValueInCents(cartId);
+    const taxAmountCents = this.cartRepository.calculateTaxAmountInCents(subtotalAmountCents);
+
+    const cart = await this.cartRepository.findOneCartById(cartId);
+
+    cart.subtotalAmountCents = subtotalAmountCents;
+    cart.taxAmountCents = taxAmountCents;
+
+    await this.cartRepository.persistCart(cart);
+
+    return {
+      subtotalAmountCents,
+      taxAmountCents
+    }
+
+
   }
 
-  calculateTaxAmountInCents(subtotalAmountCents : number): number {
-    return subtotalAmountCents * 0.04;
-  }
+
+  
 
 }

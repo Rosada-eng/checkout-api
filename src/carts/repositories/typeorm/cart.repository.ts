@@ -31,7 +31,8 @@ export class CartRepository implements ICartRepository {
             where: {
                 id: cartId,
                 status: CartStatus.OPEN
-            }
+            },
+            relations: ['productCarts']
         })
     }
 
@@ -40,7 +41,8 @@ export class CartRepository implements ICartRepository {
             where: {
                 buyerTaxId: buyerTaxId,
                 status: CartStatus.OPEN
-            }
+            },
+            relations: ['productCarts']
         })
     }
 
@@ -48,7 +50,8 @@ export class CartRepository implements ICartRepository {
         return await this.cartRepository.findOne({
             where: {
                 id: cartId,
-            }
+            },
+            relations: ['productCarts']
         })
     }
 
@@ -70,11 +73,22 @@ export class CartRepository implements ICartRepository {
         return cartProduct
     }
 
-    async persist(cart: Cart): Promise<void> {
-        await this.cartRepository.manager.save(cart)
+    async removeCartProduct(cartId: string, productId: string) {
+        await this.cartProductsRepository.delete({
+            cartId: cartId,
+            productId: productId
+        })
     }
 
-    async updateCartStatus(cartId: string, status: CartStatus): Promise<void> {
+    async persistCart(cart: Cart): Promise<Cart> {
+        return await this.cartRepository.manager.save(cart)
+    }
+
+    async persistCartProduct(cartProduct: CartProducts): Promise<CartProducts> {
+        return await this.cartProductsRepository.manager.save(cartProduct)
+    }
+
+    async updateCartStatus(cartId: string, status: CartStatus): Promise<Cart> {
         const cart = await this.cartRepository.findOne({
             where: {
                 id: cartId
@@ -83,17 +97,34 @@ export class CartRepository implements ICartRepository {
 
         cart.status = status
 
-        await this.cartRepository.save(cart)
+        return await this.cartRepository.save(cart)
 
     }
 
     async aggregateCartProductsValueInCents(cartId: string): Promise<number> {
         const resultQuery = await this.cartProductsRepository.createQueryBuilder('cartProducts')
-            .select('SUM(cartProducts.quantity * products.priceCents)', 'total')
+            .select('SUM(cartProducts.quantity * products.unitPriceCents)', 'total')
             .innerJoin(Product, 'products', 'products.id = cartProducts.productId')
             .where('cartProducts.cartId = :cartId', { cartId: cartId })
             .getRawOne()
 
-        return resultQuery.total
+        return parseInt(resultQuery.total)
+    }
+
+    calculateTaxAmountInCents(subtotalAmountCents : number): number {
+        return subtotalAmountCents * 0.04;
+    }
+
+    async updateCartValueCents(cartId: string): Promise<Cart> {
+        const cart = await this.findOneCartById(cartId)
+
+        const subtotalAmountValue = await this.aggregateCartProductsValueInCents(cartId)
+
+        const taxAmountCents = this.calculateTaxAmountInCents(subtotalAmountValue)
+
+        cart.subtotalAmountCents = subtotalAmountValue
+        cart.taxAmountCents = taxAmountCents
+
+        return await this.persistCart(cart)
     }
 }

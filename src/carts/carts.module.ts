@@ -9,6 +9,8 @@ import { ProductsModule } from 'src/products/products.module';
 import { ProductRepository } from 'src/products/repositories/typeorm/product.repository';
 import { CompaniesModule } from 'src/companies/companies.module';
 import { CompanyRepository } from 'src/companies/repositories/typeorm/company.repository';
+import { OrdersModule } from 'src/orders/orders.module';
+import { OrderRepository } from 'src/orders/repositories/order.repository';
 
 @Module({
   imports: [
@@ -17,13 +19,15 @@ import { CompanyRepository } from 'src/companies/repositories/typeorm/company.re
       CartProducts
     ]),
     ProductsModule,
-    CompaniesModule
+    CompaniesModule,
+    OrdersModule
 ],
   controllers: [CartsController],
   providers: [
     CartRepository, 
     ProductRepository, 
     CompanyRepository, 
+    OrderRepository,
     CartUseCases
 ],
   exports: [CartUseCases, TypeOrmModule],

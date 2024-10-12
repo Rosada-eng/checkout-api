@@ -11,11 +11,9 @@ export interface ICartUseCases {
 
     removeOneProductFromCart(cartId: string, productId: string): Promise<ICart>
 
-    calculateSubtotalAmountInCents(cartId: string): Promise<number>
-
-    calculateTaxAmountInCents(csubtotalAmountCents : number): number
+    calculateValues(cartId: string): Promise<object>
 
     cancelCart(cartId: string): Promise<void>
 
-    closeCart(cartId: string): Promise<void>
+    closeCart(cartId: string): Promise<object>
 }

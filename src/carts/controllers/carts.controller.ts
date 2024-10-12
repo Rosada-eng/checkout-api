@@ -45,14 +45,7 @@ export class CartsController {
 
   @Post('/calculate-values/:id')
   async calculateValues(@Param('id') cartId: string) {
-    const subtotalAmountCents = await this.cartsUseCases.calculateSubtotalAmountInCents(cartId);
-
-    const taxAmountCents = this.cartsUseCases.calculateTaxAmountInCents(subtotalAmountCents);
-
-    return {
-      subtotalAmountCents,
-      taxAmountCents
-    };
+    return await this.cartsUseCases.calculateValues(cartId);
   }
 
 
