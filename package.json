@@ -12,6 +12,7 @@
     "migration:run": "npm run typeorm -- --dataSource=src/infrastructure/typeorm/data-source.ts migration:run",
     "migration:revert": "npm run typeorm -- --dataSource=src/infrastructure/typeorm/data-source.ts migration:revert",
     "schema:drop": "npm run typeorm -- --dataSource=src/infrastructure/typeorm/data-source.ts schema:drop",
+    "seed": "ts-node -r tsconfig-paths/register src/@infrastructure/seeds/run-seed.ts", 
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -39,7 +40,8 @@
     "pg": "^8.13.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "typeorm-extension": "^3.6.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

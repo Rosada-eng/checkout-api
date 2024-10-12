@@ -1,11 +1,12 @@
 import { DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
+import { SeederOptions } from 'typeorm-extension';
 
 if (process.env.NODE_ENV === 'local') {
   dotenv.config({ path: '.env' });
 }
 
-const config: DataSourceOptions = {
+const config: DataSourceOptions & SeederOptions = {
   type: process.env.DATABASE_TYPE as any,
   host: process.env.DATABASE_HOST,
   port: parseInt(process.env.DATABASE_PORT),
@@ -24,7 +25,9 @@ const config: DataSourceOptions = {
       key: process.env.DATABASE_KEY ?? undefined,
       cert: process.env.DATABASE_CERT ?? undefined,
     } : undefined,
-  }
+  },
+
+  seeds: ['dist/@infrastructure/seeds/**/*.js'],
 };
 
 export default config;
